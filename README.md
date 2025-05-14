@@ -1,6 +1,6 @@
 # Historical publication records for _P. putida_ KT2440 genome annotations
 
-This repository contains scripts for downloading publication metadata from Google Scholar using RSelenium and the Chromium web browser.
+This repository contains scripts for downloading publication metadata from Google Scholar using [RSelenium](https://github.com/ropensci/RSelenium) and the [Chromium](https://github.com/chromium/chromium) web browser.
 
 It is part of an upcoming publication analyzing the usage of different _P. putida_ genome annotation versions across the literature
 
