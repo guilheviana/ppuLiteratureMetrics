@@ -1,6 +1,7 @@
 library(ggplot2)
 source("utils.R")
 
+# get version history from ncbi
 refseq_url <- "https://www.ncbi.nlm.nih.gov/nuccore/NC_002947.4?report=girevhist"
 genbank_url <- "https://www.ncbi.nlm.nih.gov/nuccore/AE015451.2?report=girevhist"
 
@@ -12,6 +13,7 @@ version_history <- purrr::map(c(refseq_url, genbank_url), ~ {
                      }) |>
                      purrr::list_rbind()
 
+# prepare data
 vh_formatted <- version_history |>
   dplyr::mutate(`Update Date` = lubridate::mdy_hm(`Update Date`),
                 Accession = stringr::str_remove_all(Accession, "\\.+\\d"),
@@ -57,5 +59,5 @@ version_history_plot <- vh_formatted |>
   )
 
 
-ggsave(version_history_plot, filename = "Fig 4. - version history", device = Cairo::CairoSVG, path = "../output/panels/", width = 6, height = 5, units = "in", dpi = 300)
+ggsave(version_history_plot, filename = "Fig - version history", device = Cairo::CairoSVG, path = "../output/panels/", width = 6, height = 5, units = "in", dpi = 300)
 

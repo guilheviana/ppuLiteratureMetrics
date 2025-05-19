@@ -43,4 +43,4 @@ pub_history <- cumsum_data |>
     axis.line = element_line(color = "black", linewidth = 0.5)
   )
 
-ggsave(pub_history, filename = "Fig 4. - publication history", device = Cairo::CairoSVG, path = "../output/panels/", width = 6, height = 5, units = "in", dpi = 300)
+ggsave(pub_history, filename = "Fig - publication history", device = Cairo::CairoSVG, path = "../output/panels/", width = 6, height = 5, units = "in", dpi = 300)
