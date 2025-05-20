@@ -7,23 +7,32 @@ if (file.exists("scholar_results.rds")) {
   source("search_google_scholar.R")
 }
 
-misformatted <- scholar_results |>
-  dplyr::filter((is.na(journal) | is.na(publisher) | is.na(year) | stringr::str_detect(title, "\\[CITATION\\]")))
+# reformats the results table removing low-quality entries
+scholar_results_filtered <- scholar_results |>
+  tidyr::drop_na() |>  # removes entries with incomplete fields
+  dplyr::filter(journal != "bioRxiv", publisher != "biorxiv.org|arxiv.org") |>
+  dplyr::filter(stringr::str_detect(title, "CITATION|KEYWORDS", negate = TRUE)) |>
+  dplyr::filter(stringr::str_detect(year, ",", negate = TRUE)) # removes 2 entries with commas in the year field
+
+# # saves files
+# scholar_results|>
+#   dplyr::arrange(year) |>
+#   readr::write_tsv(file = "raw_results.tsv")
+#
+# scholar_results_filtered |>
+#   dplyr::arrange(year) |>
+#   readr::write_tsv(file = "filtered_results.tsv")
 
 
-results_clean <- scholar_results |>
-
-  dplyr::filter(!((is.na(journal) | is.na(publisher) | is.na(year) | stringr::str_detect(title, "\\[CITATION\\]")))) |>
-  dplyr::mutate(year = as.numeric(year)) |>
-  dplyr::filter(!is.na(year))
-
-genbank_cumsum <- getCumulativeNumberOfPubs(filter  = "AE015451")
-refseq_cumsum <- getCumulativeNumberOfPubs(filter  = "NC_002947")
+# prepares data for plotting
+genbank_cumsum <- getCumulativeNumberOfPubs(dataset = scholar_results_filtered, filter  = "AE015451")
+refseq_cumsum <- getCumulativeNumberOfPubs(dataset = scholar_results_filtered, filter  = "NC_002947")
 
 cumsum_data <- dplyr::bind_rows(genbank_cumsum, refseq_cumsum) |>
-  dplyr::mutate(query = forcats::fct_relevel(query, c("NC_002947", "AE015451")))
+  dplyr::mutate(query = forcats::fct_relevel(query, c("NC_002947", "AE015451")),
+                year = as.numeric(year))
 
-
+# plot
 pub_history <- cumsum_data |>
   ggplot(aes(x = year, y = cummulative, fill = query, color = query, group)) +
   geom_area(linewidth = 1) +
@@ -43,4 +52,5 @@ pub_history <- cumsum_data |>
     axis.line = element_line(color = "black", linewidth = 0.5)
   )
 
+# save plot
 ggsave(pub_history, filename = "Fig - publication history", device = Cairo::CairoSVG, path = "../output/panels/", width = 6, height = 5, units = "in", dpi = 300)
