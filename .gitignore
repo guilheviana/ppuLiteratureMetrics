@@ -1,5 +1,5 @@
 # ignored files
 .Rhistory
-.Rproj.user*
+.Rproj.user/
 selenium-server-2.0.0.jar
 .RData
