@@ -14,15 +14,24 @@ scholar_results_filtered <- scholar_results |>
   dplyr::filter(stringr::str_detect(title, "CITATION|KEYWORDS", negate = TRUE)) |>
   dplyr::filter(stringr::str_detect(year, ",", negate = TRUE)) # removes 2 entries with commas in the year field
 
+# keep an record of dropped results (for reference)
+scholar_results_dropped <- dplyr::anti_join(scholar_results, scholar_results_filtered)
+
 # # saves files
+# dir.create("tables", showWarnings = FALSE)
+#
 # scholar_results|>
 #   dplyr::arrange(year) |>
-#   readr::write_tsv(file = "raw_results.tsv")
+#   readr::write_tsv(file = "tables/raw.tsv")
 #
 # scholar_results_filtered |>
 #   dplyr::arrange(year) |>
-#   readr::write_tsv(file = "filtered_results.tsv")
-
+#   readr::write_tsv(file = "tables/filtered.tsv")
+#
+# scholar_results_dropped |>
+#   dplyr::arrange(year) |>
+#   readr::write_tsv(file = "tables/dropped.tsv")
+#
 
 # prepares data for plotting
 genbank_cumsum <- getCumulativeNumberOfPubs(dataset = scholar_results_filtered, filter  = "AE015451")
